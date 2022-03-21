@@ -19,6 +19,7 @@
 		B087AEB427E42682009F3DFB /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B087AEB327E42682009F3DFB /* TableViewCell.swift */; };
 		B087AEB627E46C09009F3DFB /* KeywordViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = B087AEB527E46C09009F3DFB /* KeywordViews.swift */; };
 		B087AEB827E488EE009F3DFB /* NewsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B087AEB727E488EE009F3DFB /* NewsModel.swift */; };
+		B087AEBA27E848DF009F3DFB /* ADImageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B087AEB927E848DF009F3DFB /* ADImageTableViewCell.swift */; };
 		B0DB647427E6B26400091C66 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DB647327E6B26400091C66 /* UIColor.swift */; };
 /* End PBXBuildFile section */
 
@@ -56,6 +57,7 @@
 		B087AEB327E42682009F3DFB /* TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
 		B087AEB527E46C09009F3DFB /* KeywordViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeywordViews.swift; sourceTree = "<group>"; };
 		B087AEB727E488EE009F3DFB /* NewsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsModel.swift; sourceTree = "<group>"; };
+		B087AEB927E848DF009F3DFB /* ADImageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ADImageTableViewCell.swift; sourceTree = "<group>"; };
 		B0DB647327E6B26400091C66 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -118,6 +120,7 @@
 				B087AEB527E46C09009F3DFB /* KeywordViews.swift */,
 				B087AEB727E488EE009F3DFB /* NewsModel.swift */,
 				B0DB647327E6B26400091C66 /* UIColor.swift */,
+				B087AEB927E848DF009F3DFB /* ADImageTableViewCell.swift */,
 			);
 			path = HomeWork;
 			sourceTree = "<group>";
@@ -270,6 +273,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B087AEBA27E848DF009F3DFB /* ADImageTableViewCell.swift in Sources */,
 				B087AEB827E488EE009F3DFB /* NewsModel.swift in Sources */,
 				B0DB647427E6B26400091C66 /* UIColor.swift in Sources */,
 				B087AE8827E41FB6009F3DFB /* ViewController.swift in Sources */,

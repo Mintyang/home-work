@@ -11,11 +11,14 @@ class ViewController: UIViewController {
     
     var filtereds:[FilteredModel] = []
     let tableView = UITableView()
+    let activityIndicatorView = UIActivityIndicatorView()
     var page = 1
     var isReload = true
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setTableView()
+        self.setActivityIndicatorView()
         
     }
     
@@ -37,12 +40,12 @@ class ViewController: UIViewController {
         
         // 註冊 tableViewCell
         tableView.register(TableViewCell.self, forCellReuseIdentifier: TableViewCell.identifier)
+        tableView.register(ADImageTableViewCell.self, forCellReuseIdentifier: ADImageTableViewCell.identifier)
         
     }
     
-
-    func getData(page:Int, limit:Int, completion:@escaping ((NewsModel?) -> ())) {
-        let activityIndicatorView = UIActivityIndicatorView()
+    func setActivityIndicatorView() {
+        
         activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
         activityIndicatorView.style = .large
         activityIndicatorView.backgroundColor = UIColor.gray
@@ -56,6 +59,30 @@ class ViewController: UIViewController {
         self.view.addConstraint(heightactivityIndicatorViewConstraint)
         self.view.addConstraint(centerXactivityIndicatorViewConstraint)
         self.view.addConstraint(centerYactivityIndicatorViewConstraint)
+    }
+
+}
+
+extension ViewController: UITableViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let height = scrollView.frame.height
+        let contentOffsetY = scrollView.contentOffset.y
+        let bottomOffsetY = scrollView.contentSize.height - contentOffsetY
+        if bottomOffsetY <= height && self.isReload {
+            self.isReload = false
+            self.getData(page: self.page, limit: 20) { newsModel in
+                self.page += 1
+                guard let model = newsModel else { return }
+                self.filtereds += (model.data?.filtered)!
+                self.isReload = true
+                DispatchQueue.main.sync {
+                    self.tableView.reloadData()
+                }
+            }
+        }
+    }
+    // 取得API資訊 帶入要取得的頁數，與一次要拿幾筆
+    func getData(page:Int, limit:Int, completion:@escaping ((NewsModel?) -> ())) {
         
         guard var urlComponents = URLComponents(string: "https://fintech.eastasia.cloudapp.azure.com/api/news") else {  return }
         let pageItem = URLQueryItem(name: "page", value: "\(page)")
@@ -66,12 +93,12 @@ class ViewController: UIViewController {
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDFiYTVhODg1MGViMzRjNTg2ODg5Y2MiLCJtb2RlbCI6IkFwcERldmljZSIsImlhdCI6MTYxMjQyNTM0NywiZXhwIjoxNjI3OTc3MzQ3fQ.8ATkhNKUP_vCSCplIyfQV6Udd6kXE6mPXeudVIZUsXs", forHTTPHeaderField: "Authorization")
-        activityIndicatorView.startAnimating()
+        self.activityIndicatorView.startAnimating()
         let rask = session.dataTask(with: request) { data, response, error in
             guard let newsData = data else { return }
             do {
                 DispatchQueue.main.sync {
-                    activityIndicatorView.stopAnimating()
+                    self.activityIndicatorView.stopAnimating()
                 }
                 let model = try JSONDecoder().decode(NewsModel.self, from: newsData)
                 completion(model)
@@ -85,26 +112,6 @@ class ViewController: UIViewController {
 
 }
 
-extension ViewController: UITableViewDelegate {
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let height = scrollView.frame.height
-        let contentOffsetY = scrollView.contentOffset.y
-        let bottomOffsetY = scrollView.contentSize.height - contentOffsetY
-        if bottomOffsetY <= height && self.isReload {
-            self.isReload = false
-            self.getData(page: self.page, limit: 10) { newsModel in
-                self.page += 1
-                guard let model = newsModel else { return }
-                self.filtereds += (model.data?.filtered)!
-                self.isReload = true
-                DispatchQueue.main.sync {
-                    self.tableView.reloadData()
-                }
-            }
-        }
-    }
-}
-
 extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.filtereds.count
@@ -112,8 +119,16 @@ extension ViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: TableViewCell.identifier, for: indexPath)
-                as? TableViewCell else { return UITableViewCell() }
-        cell.setCell(filteredModel: filtereds[indexPath.row])
-        return cell
+                as? TableViewCell, let adImageTableViewCell = tableView.dequeueReusableCell(withIdentifier: ADImageTableViewCell.identifier, for: indexPath)
+                as? ADImageTableViewCell else { return UITableViewCell() }
+        // 判斷有沒有需要顯示圖片，使用不同的cell來做顯示
+        if let urlString = self.filtereds[indexPath.row].thumbs?[0].url, let _ = URL(string: urlString) {
+            adImageTableViewCell.setCell(filteredModel: self.filtereds[indexPath.row])
+            return adImageTableViewCell
+        } else {
+            cell.setCell(filteredModel: self.filtereds[indexPath.row])
+            return cell
+        }
     }
+    
 }
